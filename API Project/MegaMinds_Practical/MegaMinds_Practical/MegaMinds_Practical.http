@@ -1,0 +1,6 @@
+@MegaMinds_Practical_HostAddress = http://localhost:5249
+
+GET {{MegaMinds_Practical_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
