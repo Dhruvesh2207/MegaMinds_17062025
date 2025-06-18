@@ -1,0 +1,31 @@
+<table mat-table [dataSource]="data" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="SamplingTime">
+    <th mat-header-cell *matHeaderCellDef> Sampling Time </th>
+    <td mat-cell *matCellDef="let element"> {{element.SamplingTime}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Project Name">
+    <th mat-header-cell *matHeaderCellDef> Project Name </th>
+    <td mat-cell *matCellDef="let element"> {{element['Project Name']}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Construction Count">
+    <th mat-header-cell *matHeaderCellDef> Construction Count </th>
+    <td mat-cell *matCellDef="let element"> {{element['Construction Count']}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Is Construction Completed">
+    <th mat-header-cell *matHeaderCellDef> Is Construction Completed </th>
+    <td mat-cell *matCellDef="let element"> {{element['Is Construction Completed']}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Length of the road">
+    <th mat-header-cell *matHeaderCellDef> Length of the road </th>
+    <td mat-cell *matCellDef="let element"> {{element['Length of the road']}} </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>

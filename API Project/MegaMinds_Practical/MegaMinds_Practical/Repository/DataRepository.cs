@@ -26,15 +26,27 @@ namespace MegaMinds_Practical.Repository
         {
             try
             {
-                await _dbContext.Observations.AddAsync(observation);
+                var existing = await _dbContext.Observations
+                    .FirstOrDefaultAsync(o => o.Id == observation.Id);
+
+                if (existing != null)
+                {
+                    _dbContext.Entry(existing).CurrentValues.SetValues(observation);
+                }
+                else
+                {   
+                    await _dbContext.Observations.AddAsync(observation);
+                }
+
                 await _dbContext.SaveChangesAsync();
                 return true;
-            }
+            }   
             catch
             {
                 return false;
             }
         }
+
 
 
     }
