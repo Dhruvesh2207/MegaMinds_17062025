@@ -1,33 +1,28 @@
 <div class="container">
   <div class="listbox">
     <ul>
-      <li
-        [ngClass]="{ 'selected': selected === item }"
-        *ngFor="let item of data"
-        (click)="onSelect(item)"
-      >
-        {{ item.samplingTime | date: 'dd-MM-yyyy HH:mm:ss a' }}
+      <li [ngClass]="{'selected': selected === item}" *ngFor="let item of data" (click)="onSelect(item)">
+        {{ item.SamplingTime | date:'dd-MM-yyyy HH:mm:ss a' }}
       </li>
     </ul>
   </div>
 
   <div class="details" *ngIf="form">
    <form [formGroup]="form">
-      <div *ngFor="let prop of selectedProperties" class="form-row" style="display: flex; align-items: center; margin-bottom: 10px;">
-        
-        <div style="font-weight: bold;">
-          {{ form.get(prop.key)?.value }}
-        </div>
+  <div *ngFor="let prop of selectedProperties">
+    <label>{{ prop.Label }}</label>
 
-        <input
-          type="text"
-          [value]="prop.label"
-          disabled
-          style="width: 250px; margin-right: 10px;"
-        />
+    <input *ngIf="isTextField(prop.Value)" type="text" [formControlName]="prop.Label">
+
+    <input *ngIf="isNumberField(prop.Value)" type="number" [formControlName]="prop.Label">
+
+    <input *ngIf="isBooleanField(prop.Value)" type="checkbox" [formControlName]="prop.Label">
+
   </div>
-
+  
   <button type="button" (click)="onSave()">Save</button>
+
 </form>
+
   </div>
 </div>

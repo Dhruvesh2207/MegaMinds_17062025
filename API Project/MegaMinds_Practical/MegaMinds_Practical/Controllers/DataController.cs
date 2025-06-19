@@ -10,10 +10,11 @@ namespace MegaMinds_Practical.Controllers
     public class DataController : ControllerBase
     {
         private readonly IDataRepository _dataRepository;
-
-        public DataController(IDataRepository dataRepository) 
+        private readonly IWebHostEnvironment _env;
+        public DataController(IDataRepository dataRepository , IWebHostEnvironment env) 
         {
             _dataRepository = dataRepository;
+            _env = env;
         }
 
         [HttpGet]
@@ -47,5 +48,22 @@ namespace MegaMinds_Practical.Controllers
                 return StatusCode(500, new { message = "Internal error", details = ex.Message });
             }
         }
+
+        [HttpPost("save-data")]
+        public IActionResult SaveData([FromBody] object updatedData)
+        {
+            string filePath = Path.Combine(_env.WebRootPath, "assets", "data.json");
+
+            try
+            {
+                System.IO.File.WriteAllText(filePath, updatedData.ToString());
+                return Ok(new { status = "success", message = "Data saved." });
+            }
+            catch (Exception ex)
+            {   
+                return StatusCode(500, new { status = "error", message = ex.Message });
+            }
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DataService } from '../data.service';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-detailed-view',
@@ -9,68 +9,61 @@ import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
   styleUrl: './detailed-view.scss'
 })
 export class DetailedView {
+
   data: any[] = [];
   selected: any;
   form!: FormGroup;
-  selectedProperties: any[] = [];
+  selectedProperties : any;
 
-  labelMapping: { [key: string]: string } = {
-    'Road Construction 1': 'Project Name',
-    'Construction Count': 'Construction Count',
-    'Is Construction Completed': 'Is Construction Completed',
-    'Length of the road': 'Length of the road'
-  };
+  constructor(private dataService: DataService,private fb: FormBuilder) {}
 
-  constructor(private dataService: DataService, private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.dataService.getData().subscribe(result => {
-      this.data = result.flatMap((obs: any) => obs.datas || []);
-
-      if (this.data.length > 0 && !this.selected) {
+   ngOnInit(): void {
+     this.dataService.getData().subscribe(result => {
+       this.data = result.datas;
+       if (!this.selected) {
         this.onSelect(this.data[0]);
       }
     });
   }
 
- onSelect(item: any) {
-  this.selected = item;
+  onSelect(item: any) {
+    this.selected = item;
+    this.selectedProperties = item.Properties;
 
-  this.selectedProperties = (item.properties || []).map((prop: any) => ({
-    key: prop.label,          
-    label: prop.label,        
-    value: prop.value        
-  }));
-  
-  const group: { [key: string]: FormControl } = {};
-  this.selectedProperties.forEach(prop => {
-    group[prop.key] = new FormControl(prop.value);
-  });
+    const group: any = {};
+    item.Properties.forEach((prop: any) => {
+      console.log("prop", prop);
 
-  this.form = this.fb.group(group);
+      group[prop.Label] = [prop.Value];
+    });
+
+    console.log("group",group);
+    
+    this.form = this.fb.group(group);
+  }
+
+isTextField(value: any): boolean {
+  return typeof value === 'string';
 }
 
+isNumberField(value: any): boolean {
+  return typeof value === 'number';
+}
 
-  isTextField(value: any): boolean {  
-    return typeof value === 'string';
-  }
+isBooleanField(value: any): boolean {
+  return typeof value === 'boolean';
+}
+onSave() {
+  const updated = this.form.value;
 
-  isNumberField(value: any): boolean {
-    return typeof value === 'number';
-  }
+  this.selected.Properties.forEach((prop: any) => {
+    prop.Value = updated[prop.Label];
+  });
 
-  isBooleanField(value: any): boolean {
-    return typeof value === 'boolean';
-  }
+  this.dataService.updateData({ datas: this.data }).subscribe(result => {
+    console.log('Update success', result);
 
-  onSave() {  
-    const updated = this.form.value;
-    this.selected.properties.forEach((prop: any) => {
-      prop.value = updated[prop.label];
-    });
-
-    this.dataService.updateData(this.data).subscribe(result => {
-      console.log('Update success', result);
-    });
-  }
+    window.location.reload();
+  });
+}
 }
